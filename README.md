@@ -7,6 +7,7 @@ Adds ability to clone and fetch remote git repositories to redmine.
 * Easy install (just clone to redmine plugins folder)
 * Webhooks integration (gitlab and custom)
 * Works well with enabled autofetch changesets setting and in mix with other scm types  
+* Automatic deletes unreachable commits
 
 ## Install
 

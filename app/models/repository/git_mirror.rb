@@ -76,7 +76,37 @@ class Repository::GitMirror < Repository::Git
     err = ::GitMirror::Git.fetch(root_url, url)
     Rails.logger.warn 'Err with fetching: ' + err if err
 
+    remove_unreachable_commits
     fetch_changesets(true)
+  end
+
+  private def remove_unreachable_commits
+    commits, e = ::GitMirror::Git.unreachable_commits(root_url)
+    if e
+      Rails.logger.warn 'Err when fetching unreachable commits: ' + e
+      return
+    end
+
+    return if commits.empty?
+
+    # remove commits from heads extra info
+    h = extra_info["heads"]
+    if h
+      h1 = h.dup
+      commits.each { |c| h1.delete(c) }
+
+      if h1.length != h.length
+        n = {}
+        n["heads"] = h1
+
+        merge_extra_info(n)
+        save
+      end
+    end
+
+    Changeset.where(repository: self, revision: commits).destroy_all
+
+    ::GitMirror::Git.prune(root_url) if commits.length >= 10
   end
 
   class << self

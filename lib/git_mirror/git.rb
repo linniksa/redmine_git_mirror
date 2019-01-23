@@ -12,6 +12,25 @@ module GitMirror
         e
       end
 
+      def unreachable_commits(path)
+        o, e = git "--git-dir", path, "fsck", "--unreachable", "--no-reflogs", "--no-progress"
+        return nil, e if e
+
+        prefix = 'unreachable commit '
+
+        commits = o.lines.lazy
+          .select { | line | line.start_with?(prefix) }
+          .map { |line| line[prefix.length..-1].strip }
+          .to_a
+
+        return commits, nil
+      end
+
+      def prune(path)
+        _, e = git "--git-dir", path, "prune"
+        e
+      end
+
       def init(clone_path, url)
         url = GitMirror::URL.parse(url)
         GitMirror::SSH.ensure_host_known(url.host) if url.uses_ssh?
