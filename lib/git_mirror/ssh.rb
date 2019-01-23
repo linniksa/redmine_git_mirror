@@ -5,12 +5,12 @@ module GitMirror
       return unless host
 
       o, status = Open3.capture2("ssh-keygen", "-F", host)
-      unless status.success?
+      if status.success?
+        return if o.match /found/
+      else
+        # ssh-keygen fail if known_hosts file is not exists just log and continue
         puts "ssh-keygen exited with non-zero status: #{status}"
-        return
       end
-
-      return if o.match /found/
 
       known_hosts = Dir.home + "/.ssh/known_hosts"
 
