@@ -25,9 +25,38 @@ module GitMirror
           _, e = git "init", "--bare", clone_path
           return e if e
 
-          _, e = git "--git-dir", clone_path, "remote", "add", "--mirror=fetch", "origin", url.to_s
+          _, e = git "--git-dir", clone_path, "remote", "add", "origin", url.to_s
           return e if e
         end
+
+        set_fetch_refs(clone_path, [
+          '+refs/heads/*:refs/heads/*',
+          '+refs/tags/*:refs/tags/*',
+        ])
+      end
+
+      private def set_fetch_refs(clone_path, configs)
+        o, e = git "--git-dir", clone_path, "config", "--get-all", "remote.origin.fetch"
+        return e if e
+
+        # special ref that removes all refs outside specified
+        expected = ["+__-=_=-__/*:refs/*"] + configs
+
+        if o && o.lines
+          actual = o.lines.map(&:strip)
+          return if expected.eql?(actual)
+        end
+
+        # need change
+        _, e = git "--git-dir", clone_path, "config", "--unset-all", "remote.origin.fetch"
+        return e if e
+
+        expected.each do |v|
+          _, e = git "--git-dir", clone_path, "config", "--add", "remote.origin.fetch", v
+          return e if e
+        end
+
+        nil
       end
 
       def fetch(clone_path, url)
