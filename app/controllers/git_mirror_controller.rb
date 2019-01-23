@@ -43,10 +43,8 @@ class GitMirrorController < ActionController::Base
 
   private def fetch_by_urls(urls)
     found = false
-    Repository::GitMirror.joins(:project).merge(Project.active).where(url: urls).find_each do |repository|
-      return unless repository.project.active?
+    Repository::GitMirror.active.where(url: urls).find_each do |repository|
       found = true unless found
-
       repository.fetch()
     end
 

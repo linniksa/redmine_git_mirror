@@ -10,6 +10,10 @@ class Repository::GitMirror < Repository::Git
 
   before_destroy :remove_repo
 
+  scope :active, lambda {
+    joins(:project).merge(Project.active)
+  }
+
   private def remove_repo
     return if root_url.to_s.empty? || root_url == '/'
     return unless Dir.exist? root_url
@@ -58,8 +62,8 @@ class Repository::GitMirror < Repository::Git
     errors.add :url, err if err
   end
 
-  def fetch_changesets
-    fetch
+  def fetch_changesets(fetch = false)
+    return unless fetch
     super()
   end
 
@@ -67,12 +71,12 @@ class Repository::GitMirror < Repository::Git
     return if @fetched
     @fetched = true
 
-    puts "Fetching repo #{root_url}"
+    puts "Fetching repo #{url} to #{root_url}"
 
     err = ::GitMirror::Git.fetch(root_url, url)
     Rails.logger.warn 'Err with fetching: ' + err if err
 
-    fetch_changesets
+    fetch_changesets(true)
   end
 
   class << self
@@ -84,6 +88,13 @@ class Repository::GitMirror < Repository::Git
       attr_name = attribute_key_name.to_s
 
       Repository.human_attribute_name(attr_name, *args)
+    end
+
+    # Fetches new changes for all git mirror repositories in active projects
+    # Can be called periodically by an external script
+    # eg. bin/rails runner "Repository::GitMirror.fetch"
+    def fetch
+      Repository::GitMirror.active.find_each(&:fetch)
     end
   end
 

@@ -5,7 +5,8 @@ Adds ability to clone and fetch remote git repositories to redmine.
 
 ## Key Features
 * Easy install (just clone to redmine plugins folder)
-* webhooks integration (gitlab and custom)
+* Webhooks integration (gitlab and custom)
+* Works well with enabled autofetch changesets setting and in mix with other scm types  
 
 ## Install
 
@@ -13,6 +14,8 @@ Adds ability to clone and fetch remote git repositories to redmine.
     git clone https://github.com/linniksa/redmine_git_mirror
 
 Restart redmine, and enable `Git Mirror` scm type at `redmine.site/settings?tab=repositories`
+
+You should add ```./bin/rails runner "Repository::GitMirror.fetch"``` script to cronjobs. 
 
 ## GitLab integration
 
