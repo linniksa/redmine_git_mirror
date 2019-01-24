@@ -15,8 +15,15 @@ class Repository::GitMirror < Repository::Git
   }
 
   private def remove_repo
-    return if root_url.to_s.empty? || root_url == '/'
-    return unless Dir.exist? root_url
+    root_url = self.root_url.to_s
+
+    return if root_url.empty?
+    return if root_url == '/'
+    return if root_url.to_s.length <= 15
+
+    # check git dirs and files
+    return unless Dir.exist? root_url + '/config'
+    return unless Dir.exist? root_url + '/object'
 
     FileUtils.rm_rf root_url
   end
