@@ -21,7 +21,7 @@ You should add ```./bin/rails runner "Repository::GitMirror.fetch"``` script to 
 ## GitLab integration
 
 You can setup per-project or system wide hook to `redmine.site/sys/git_mirror/gitlab`, 
-specify WD-key as Secret of webhook.
+anable WS support in redmine at `redmine.site/settings?tab=repositories` and specify api-key as Secret of webhook.
 It's allow redmine to immediately fetch changes pushed to gitlab.
 
 ###### For per-project setup
