@@ -7,9 +7,8 @@ require File.expand_path(File.dirname(__FILE__) + '/../../lib/git_mirror/url')
 
 class TestUrl < Minitest::Test
   def test_normalize
-    url = GitMirror::URL.parse('http://user:pwd@test.ru/123.git')
-    assert_equal 'http://***:***@test.ru/123.git', url.normalize
-    assert_equal 'http://user:pwd@test.ru/123.git', url.to_s
+    url = GitMirror::URL.parse('http://test.ru//123.git')
+    assert_equal 'http://test.ru/123.git', url.normalize
   end
 
   def test_use_ssh

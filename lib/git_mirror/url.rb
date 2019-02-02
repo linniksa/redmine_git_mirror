@@ -78,12 +78,19 @@ module GitMirror
       @schema == 'ssh' || self.scp_like?
     end
 
+    def has_credential?
+      return false if scp_like?
+
+      !password.to_s.empty? || !user.to_s.empty?
+    end
+
     def normalize
       o = self.dup
-      o.instance_variable_set(:@user, '***') if @user
-      o.instance_variable_set(:@password, '***') if @password
 
-      return o.to_s
+      path = o.path.gsub(/\/{2,}/, '/')
+      o.instance_variable_set(:@path, path)
+
+      o.to_s
     end
 
     def to_h

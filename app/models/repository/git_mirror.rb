@@ -1,7 +1,9 @@
+require 'git_mirror/url'
+require 'git_mirror/git'
 
 class Repository::GitMirror < Repository::Git
 
-  before_validation :validate_url, on: :create
+  before_validation :validate_and_normalize_url, on: :create
   before_validation :set_defaults, on: :create
   after_validation :init_repo, on: :create
   after_commit :fetch, on: :create
@@ -26,7 +28,9 @@ class Repository::GitMirror < Repository::Git
     FileUtils.rm_rf root_url
   end
 
-  private def validate_url
+  private def validate_and_normalize_url
+    url = self.url.to_s.strip
+
     return if url.to_s.empty?
 
     begin
@@ -41,8 +45,18 @@ class Repository::GitMirror < Repository::Git
       return
     end
 
-    err = ::GitMirror::Git.check_remote_url(parsed_url)
-    errors.add :url, err if err
+    if parsed_url.has_credential?
+      errors.add :url, 'cannot use credentials'
+      return
+    end
+
+    self.url = parsed_url.normalize
+
+    err = ::GitMirror::Git.check_remote_url(self.url)
+    if err
+      errors.add :url, err
+      return
+    end
   end
 
   private def set_defaults
@@ -57,7 +71,7 @@ class Repository::GitMirror < Repository::Git
     self.root_url = ::GitMirror::Settings.path + '/' +
       Time.now.strftime("%Y%m%d%H%M%S%L") +
       "_" +
-      (parsed_url.host + parsed_url.path).gsub(/[\\\/]+/, '_').gsub(/[^A-Za-z._-]/, '')[0..64]
+      (parsed_url.host + parsed_url.path.gsub(/\.git$/, '')).gsub(/[\\\/]+/, '_').gsub(/[^A-Za-z._-]/, '')[0..64]
   end
 
   private def init_repo
