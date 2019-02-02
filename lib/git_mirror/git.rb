@@ -51,6 +51,8 @@ module GitMirror
         set_fetch_refs(clone_path, [
           '+refs/heads/*:refs/heads/*',
           '+refs/tags/*:refs/tags/*',
+          # uncomment next line if you want to show (gitlab) merge requests as braches in redmine
+          # '+refs/merge-requests/*/head:refs/heads/MR-*',
         ])
       end
 
