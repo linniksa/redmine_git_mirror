@@ -9,25 +9,47 @@ Adds ability to clone and fetch remote git repositories to redmine.
 * Works well with enabled autofetch changesets setting and in mix with other scm types  
 * Automatic deletes unreachable commits
 
-## Install
+# Install
 
-    cd [redmine_root]/plugins
+    cd [redmine-root]/plugins
     git clone https://github.com/linniksa/redmine_git_mirror
 
 Restart redmine, and enable `Git Mirror` scm type at `redmine.site/settings?tab=repositories`
 
-You should add ```./bin/rails runner "Repository::GitMirror.fetch"``` script to cronjobs. 
+## Accessing private repositories
 
-## GitLab integration
+At this moment only ssh access with redmine user ssh key is supported. 
 
-You can setup per-project or system wide hook to `redmine.site/sys/git_mirror/gitlab`, 
-anable WS support in redmine at `redmine.site/settings?tab=repositories` and specify api-key as Secret of webhook.
-It's allow redmine to immediately fetch changes pushed to gitlab.
+# Fetching changes
 
-###### For per-project setup
+This plugin supports 2 ways of fetching changes, via cronjob or via hooks.
+You can use only one or both of them together.
 
-Select only `Push` and `Tags` events
+## Cronjob
+
+Run ```./bin/rails runner "Repository::GitMirror.fetch"```, for example: 
+
+    5,20,35,50 * * * * cd /usr/src/redmine && ./bin/rails runner "Repository::GitMirror.fetch"  -e production >> log/cron_rake.log 2>&1
+
+## Hooks
+
+Hooks is preferred way because you can immediately see changes of you repository.
+
+To enable hooks you should go to `redmine.site/settings?tab=repositories` and enable WS support:
+
+![Enable ws support](docs/img/redmine-ws.png)
+
+### GitLab integration
+
+You can setup per-project or system wide hook, for both variants use 
+* `redmine.site/sys/git_mirror/gitlab` as `URL`
+* key from `Repository management WS API key` as `Secret Token`
 
 ###### For system wide setup
 
-Select only `Repository update events`
+Go to `gitlab.site/admin/hooks`, and select only `Repository update events` trigger.
+
+###### For per-project setup
+
+Go to `gitlab.site/user/project/settings/integrations`, and select only `Push` and `Tags` events
+
