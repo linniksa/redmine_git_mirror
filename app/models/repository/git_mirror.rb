@@ -1,6 +1,4 @@
 
-require 'open3'
-
 class Repository::GitMirror < Repository::Git
 
   before_validation :validate_url, on: :create
@@ -22,8 +20,8 @@ class Repository::GitMirror < Repository::Git
     return if root_url.to_s.length <= 15
 
     # check git dirs and files
-    return unless Dir.exist? root_url + '/config'
-    return unless Dir.exist? root_url + '/object'
+    return unless File.exist? root_url + '/config'
+    return unless Dir.exist? root_url + '/objects'
 
     FileUtils.rm_rf root_url
   end
