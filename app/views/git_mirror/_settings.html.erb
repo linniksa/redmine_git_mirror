@@ -17,11 +17,11 @@ For better look i use small hack, sorry about that
     <%= hidden_field_tag "settings[prevent_multiple_clones]", 0 %>
     <%= check_box_tag "settings[prevent_multiple_clones]", 1, RedmineGitMirror::Settings.prevent_multiple_clones?,
         :id => 'prevent_multiple_clones',
-        :data => {:enables => '#search_clones_in_all_schemes'}
+        :data => {:shows => '.prevent_multiple_clones_shows'}
     %>
   </p>
 
-  <p>
+  <p class="prevent_multiple_clones_shows">
     <label for="search_clones_by_all_schemes">
       Search for clones in all url schemes
     </label>
