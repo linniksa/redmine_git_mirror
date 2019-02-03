@@ -1,16 +1,38 @@
 
 class Repository::GitMirror < Repository::Git
 
-  before_validation :validate_and_normalize_url, on: :create
+  before_validation :validate_and_normalize_url, on: [:create, :update]
   before_validation :set_defaults, on: :create
   after_validation :init_repo, on: :create
   after_commit :fetch, on: :create
+
+  after_validation :update_remote_url, on: :update
 
   before_destroy :remove_repo
 
   scope :active, lambda {
     joins(:project).merge(Project.active)
   }
+
+  safe_attributes 'url', :if => lambda { |repository, user|
+    repository.new_record? || RedmineGitMirror::Settings.url_change_allowed?
+  }
+
+  private def update_remote_url
+    return unless self.errors.empty?
+    return unless self.url_changed?
+
+    r, err = RedmineGitMirror::Git.get_remote_url(root_url)
+    if err
+      errors.add :url, err
+      return
+    end
+
+    return if r == url
+
+    err = RedmineGitMirror::Git.set_remote_url(root_url, url)
+    errors.add :url, err if err
+  end
 
   private def remove_repo
     root_url = self.root_url.to_s
@@ -27,6 +49,8 @@ class Repository::GitMirror < Repository::Git
   end
 
   private def validate_and_normalize_url
+    return unless self.new_record? || self.url_changed?
+
     url = self.url.to_s.strip
 
     return if url.to_s.empty?
@@ -68,7 +92,7 @@ class Repository::GitMirror < Repository::Git
         :all => RedmineGitMirror::Settings.search_clones_in_all_schemes?
       )
 
-      if Repository::GitMirror.where(url: urls).exists?
+      if Repository::GitMirror.where(url: urls).where.not(id: self.id).exists?
         errors.add :url, 'is already mirrored in redmine'
         return
       end

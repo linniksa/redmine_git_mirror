@@ -10,6 +10,12 @@ module RedmineGitMirror
         settings[:schemes] || []
       end
 
+      def url_change_allowed?
+        s = settings[:url_change_allowed] || false
+
+        s == true || s.to_s == '1'
+      end
+
       def prevent_multiple_clones?
         s = settings[:prevent_multiple_clones] || false
 

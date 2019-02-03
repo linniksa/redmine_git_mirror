@@ -71,6 +71,11 @@ module RedmineGitMirror
         return o.to_s.strip, e
       end
 
+      def set_remote_url(clone_path, url)
+        _, e = git "--git-dir", clone_path, "remote", "set-url", "origin", url
+        e
+      end
+
       private def set_fetch_refs(clone_path, configs)
         o, e = git "--git-dir", clone_path, "config", "--get-all", "remote.origin.fetch"
         return e if e
