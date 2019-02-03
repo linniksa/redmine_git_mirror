@@ -37,7 +37,7 @@ module RedmineGitMirror
         RedmineGitMirror::SSH.ensure_host_known(url.host) if url.uses_ssh?
 
         if Dir.exists? clone_path
-          o, e = git "--git-dir", clone_path, "config", "--get", "remote.origin.url"
+          o, e = get_remote_url(clone_path)
           return e if e
 
           return "#{clone_path} remote url differs" unless o == url.to_s
@@ -55,6 +55,20 @@ module RedmineGitMirror
           # uncomment next line if you want to show (gitlab) merge requests as braches in redmine
           # '+refs/merge-requests/*/head:refs/heads/MR-*',
         ])
+      end
+
+      def fetch(clone_path, url)
+        e = RedmineGitMirror::Git.init(clone_path, url)
+        return e if e
+
+        _, e = git "--git-dir", clone_path, "fetch", "--prune", "--all"
+        e
+      end
+
+      def get_remote_url(clone_path)
+        o, e = git "--git-dir", clone_path, "config", "--get", "remote.origin.url"
+
+        return o.to_s.strip, e
       end
 
       private def set_fetch_refs(clone_path, configs)
@@ -79,14 +93,6 @@ module RedmineGitMirror
         end
 
         nil
-      end
-
-      def fetch(clone_path, url)
-        e = RedmineGitMirror::Git.init(clone_path, url)
-        return e if e
-
-        _, e = git "--git-dir", clone_path, "fetch", "--prune", "--all"
-        e
       end
 
       private def git(*cmd)
