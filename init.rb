@@ -11,6 +11,11 @@ Redmine::Plugin.register :redmine_git_mirror do
   author_url 'https://github.com/linniksa'
 
   requires_redmine :version_or_higher => '3.3.0'
+
+  settings :default => {
+    :schemes  => %w[http https scp],
+  }, :partial => 'git_mirror/settings'
+
 end
 
 redmine_git_mirror_patches = proc do

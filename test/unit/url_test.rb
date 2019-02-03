@@ -18,21 +18,21 @@ class TestUrl < Minitest::Test
 
   cases = {
     :remote_ssh => ['ssh://git@host.xz/path/to/repo.git/', {
-      :schema => 'ssh',
+      :scheme => 'ssh',
       :user => 'git',
       :host => 'host.xz',
       :path => '/path/to/repo.git/'
     }],
 
     :remote_git => ['git://host.xz/path/to/repo.git/', {
-      :schema => 'git',
+      :scheme => 'git',
       :host => 'host.xz',
       :port => 9418,
       :path => '/path/to/repo.git/'
     }],
 
     :remote_http => ['http://git:pwd@host.xz/path/to/repo.git/', {
-      :schema => 'http',
+      :scheme => 'http',
       :user => 'git',
       :password => 'pwd',
       :host => 'host.xz',
@@ -50,8 +50,8 @@ class TestUrl < Minitest::Test
       :path => '/home/user/projects/test',
     }],
 
-    :local_file_schema => ['file:///sys/projects/my.git', {
-      :schema => 'file',
+    :local_file_scheme => ['file:///sys/projects/my.git', {
+      :scheme => 'file',
       :path => '/sys/projects/my.git',
     }],
 

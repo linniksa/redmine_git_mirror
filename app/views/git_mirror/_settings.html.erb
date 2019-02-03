@@ -1,0 +1,35 @@
+<!--
+For better look i use small hack, sorry about that
+-->
+<%= '</div>'.html_safe %>
+<style type="text/css">
+  #settings .box.settings { display: none}
+</style>
+<!---->
+
+<fieldset class="box tabular" id="git_mirror_schemas">
+  <legend>Allowed remote url schemes</legend>
+
+  <% {
+    'http'  => 'http://site/project.git',
+    'https' => 'https://site/project.git',
+    'ssh'   => 'ssh://site/project.git',
+    'scp'   => 'git@site:project.git',
+  }.each do | key, url |%>
+    <label class="floating" title="<%= key %>">
+      <%= check_box_tag \
+            "settings[schemes][]", \
+            key, \
+            settings.is_a?(Hash) &&settings[:schemes] && settings[:schemes].include?(key)
+      %>
+
+      <%= (sanitize url).sub(key, "<b>#{key}</b>").html_safe %>
+    </label>
+  <% end %>
+
+</fieldset>
+<p><%= check_all_links 'git_mirror_schemas' %></p>
+
+
+<!-- End part of hack for valid html -->
+<%= '<div>'.html_safe %>

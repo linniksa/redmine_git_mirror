@@ -10,7 +10,7 @@ end
 
 module GitMirror
   class URL
-    attr_reader :schema, :user, :password, :host, :port, :path
+    attr_reader :scheme, :user, :password, :host, :port, :path
 
     private def initialize(url)
       url = url.to_s
@@ -19,7 +19,7 @@ module GitMirror
       begin
         url = URI.parse(url)
 
-        @schema = url.scheme
+        @scheme = url.scheme
         @user = url.user
         @password = url.password
         @host = url.host
@@ -67,15 +67,19 @@ module GitMirror
     end
 
     def local?
-      (@schema.nil? && !scp_like?) || @schema == "file"
+      (@scheme.nil? && !scp_like?) || @scheme == "file"
     end
 
     def scp_like?
-      @schema.nil? && !@host.nil?
+      @scheme.nil? && !@host.nil?
     end
 
     def uses_ssh?
-      @schema == 'ssh' || self.scp_like?
+      @scheme == 'ssh' || self.scp_like?
+    end
+
+    def scheme?(*schemes)
+      schemes.include?(self.scp_like? ? 'scp' : self.scheme)
     end
 
     def has_credential?
@@ -95,7 +99,7 @@ module GitMirror
 
     def to_h
       rez = {}
-      rez[:schema] = @schema if @schema
+      rez[:scheme] = @scheme if @scheme
       rez[:user] = @user if @user
       rez[:password] = @password if @password
       rez[:host] = @host if @host
@@ -107,8 +111,8 @@ module GitMirror
     def to_s
       s = StringIO.new
 
-      if @schema
-        s << @schema
+      if @scheme
+        s << @scheme
         s << '://'
 
         if @user

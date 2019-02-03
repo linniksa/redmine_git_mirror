@@ -1,5 +1,3 @@
-require 'git_mirror/url'
-require 'git_mirror/git'
 
 class Repository::GitMirror < Repository::Git
 
@@ -42,6 +40,13 @@ class Repository::GitMirror < Repository::Git
 
     unless parsed_url.remote?
       errors.add :url, 'should be remote url'
+      return
+    end
+
+    unless parsed_url.scheme?(*::GitMirror::Settings.allowed_schemes)
+      s = ::GitMirror::Settings.allowed_schemes
+      err = s.empty?? 'no allowed schemes' : "scheme not allowed, only #{s.join', '} is allowed"
+      errors.add :url, err
       return
     end
 
