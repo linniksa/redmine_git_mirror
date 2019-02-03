@@ -8,7 +8,7 @@ module URI
   @@schemes['GIT'] = GIT
 end
 
-module GitMirror
+module RedmineGitMirror
   class URL
     attr_reader :scheme, :user, :password, :host, :port, :path
 

@@ -1,4 +1,4 @@
-module GitMirror
+module RedmineGitMirror
   module Patches
     unloadable
     module RepositoriesHelperPatch

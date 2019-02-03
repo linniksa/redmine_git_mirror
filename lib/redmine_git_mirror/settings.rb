@@ -1,5 +1,5 @@
 
-module GitMirror
+module RedmineGitMirror
   module Settings
     class << self
       def path

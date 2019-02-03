@@ -15,7 +15,7 @@ For better look i use small hack, sorry about that
       Prevent adding same remote url twice
     </label>
     <%= hidden_field_tag "settings[prevent_multiple_clones]", 0 %>
-    <%= check_box_tag "settings[prevent_multiple_clones]", 1, ::GitMirror::Settings.prevent_multiple_clones?,
+    <%= check_box_tag "settings[prevent_multiple_clones]", 1, RedmineGitMirror::Settings.prevent_multiple_clones?,
         :id => 'prevent_multiple_clones',
         :data => {:enables => '#search_clones_in_all_schemes'}
     %>
@@ -26,7 +26,7 @@ For better look i use small hack, sorry about that
       Search for clones in all url schemes
     </label>
     <%= hidden_field_tag "settings[search_clones_in_all_schemes]", 0 %>
-    <%= check_box_tag "settings[search_clones_in_all_schemes]", 1, ::GitMirror::Settings.search_clones_in_all_schemes?,
+    <%= check_box_tag "settings[search_clones_in_all_schemes]", 1, RedmineGitMirror::Settings.search_clones_in_all_schemes?,
       :id => 'search_clones_in_all_schemes'
     %>
   </p>

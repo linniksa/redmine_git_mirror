@@ -32,7 +32,7 @@ class Repository::GitMirror < Repository::Git
     return if url.to_s.empty?
 
     begin
-      parsed_url = ::GitMirror::URL.parse(url)
+      parsed_url = RedmineGitMirror::URL.parse(url)
     rescue Exception => msg
       errors.add :url, msg.to_s
       return
@@ -43,8 +43,8 @@ class Repository::GitMirror < Repository::Git
       return
     end
 
-    unless parsed_url.scheme?(*::GitMirror::Settings.allowed_schemes)
-      s = ::GitMirror::Settings.allowed_schemes
+    unless parsed_url.scheme?(*RedmineGitMirror::Settings.allowed_schemes)
+      s = RedmineGitMirror::Settings.allowed_schemes
       err = s.empty?? 'no allowed schemes' : "scheme not allowed, only #{s.join', '} is allowed"
       errors.add :url, err
       return
@@ -57,15 +57,15 @@ class Repository::GitMirror < Repository::Git
 
     self.url = parsed_url.normalize
 
-    err = ::GitMirror::Git.check_remote_url(self.url)
+    err = RedmineGitMirror::Git.check_remote_url(self.url)
     if err
       errors.add :url, err
       return
     end
 
-    if ::GitMirror::Settings.prevent_multiple_clones?
-      urls = ::GitMirror::URL.parse(url).vary(
-        :all => ::GitMirror::Settings.search_clones_in_all_schemes?
+    if RedmineGitMirror::Settings.prevent_multiple_clones?
+      urls = RedmineGitMirror::URL.parse(url).vary(
+        :all => RedmineGitMirror::Settings.search_clones_in_all_schemes?
       )
 
       if Repository::GitMirror.where(url: urls).exists?
@@ -78,13 +78,13 @@ class Repository::GitMirror < Repository::Git
   private def set_defaults
     return unless self.errors.empty? && !url.to_s.empty?
 
-    parsed_url = ::GitMirror::URL.parse(url)
+    parsed_url = RedmineGitMirror::URL.parse(url)
     if identifier.empty?
       identifier = File.basename(parsed_url.path, ".*")
       self.identifier = identifier if /^[a-z][a-z0-9_-]*$/.match(identifier)
     end
 
-    self.root_url = ::GitMirror::Settings.path + '/' +
+    self.root_url = RedmineGitMirror::Settings.path + '/' +
       Time.now.strftime("%Y%m%d%H%M%S%L") +
       "_" +
       (parsed_url.host + parsed_url.path.gsub(/\.git$/, '')).gsub(/[\\\/]+/, '_').gsub(/[^A-Za-z._-]/, '')[0..64]
@@ -93,7 +93,7 @@ class Repository::GitMirror < Repository::Git
   private def init_repo
     return unless self.errors.empty?
 
-    err = ::GitMirror::Git.init(root_url, url)
+    err = RedmineGitMirror::Git.init(root_url, url)
     errors.add :url, err if err
   end
 
@@ -108,7 +108,7 @@ class Repository::GitMirror < Repository::Git
 
     puts "Fetching repo #{url} to #{root_url}"
 
-    err = ::GitMirror::Git.fetch(root_url, url)
+    err = RedmineGitMirror::Git.fetch(root_url, url)
     Rails.logger.warn 'Err with fetching: ' + err if err
 
     remove_unreachable_commits
@@ -116,7 +116,7 @@ class Repository::GitMirror < Repository::Git
   end
 
   private def remove_unreachable_commits
-    commits, e = ::GitMirror::Git.unreachable_commits(root_url)
+    commits, e = RedmineGitMirror::Git.unreachable_commits(root_url)
     if e
       Rails.logger.warn 'Err when fetching unreachable commits: ' + e
       return
@@ -141,7 +141,7 @@ class Repository::GitMirror < Repository::Git
 
     Changeset.where(repository: self, revision: commits).destroy_all
 
-    ::GitMirror::Git.prune(root_url) if commits.length >= 10
+    RedmineGitMirror::Git.prune(root_url) if commits.length >= 10
   end
 
   class << self

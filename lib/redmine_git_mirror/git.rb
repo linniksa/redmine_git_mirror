@@ -1,13 +1,13 @@
 require 'open3'
 
-module GitMirror
+module RedmineGitMirror
   class Git
     class << self
       GIT_BIN = Redmine::Configuration['scm_git_command'] || 'git'
 
       def check_remote_url(url)
-        url = GitMirror::URL.parse(url)
-        GitMirror::SSH.ensure_host_known(url.host) if url.uses_ssh?
+        url = RedmineGitMirror::URL.parse(url)
+        RedmineGitMirror::SSH.ensure_host_known(url.host) if url.uses_ssh?
 
         _, e = git 'ls-remote',  '-h', url.to_s, 'master'
         e
@@ -33,8 +33,8 @@ module GitMirror
       end
 
       def init(clone_path, url)
-        url = GitMirror::URL.parse(url)
-        GitMirror::SSH.ensure_host_known(url.host) if url.uses_ssh?
+        url = RedmineGitMirror::URL.parse(url)
+        RedmineGitMirror::SSH.ensure_host_known(url.host) if url.uses_ssh?
 
         if Dir.exists? clone_path
           o, e = git "--git-dir", clone_path, "config", "--get", "remote.origin.url"
@@ -82,7 +82,7 @@ module GitMirror
       end
 
       def fetch(clone_path, url)
-        e = GitMirror::Git.init(clone_path, url)
+        e = RedmineGitMirror::Git.init(clone_path, url)
         return e if e
 
         _, e = git "--git-dir", clone_path, "fetch", "--prune", "--all"

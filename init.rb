@@ -22,13 +22,13 @@ end
 
 redmine_git_mirror_patches = proc do
   require 'repositories_helper'
-  require 'git_mirror/patches/repositories_helper_patch'
+  require 'redmine_git_mirror/patches/repositories_helper_patch'
 
   def include(klass, patch)
     klass.send(:include, patch) unless klass.included_modules.include?(patch)
   end
 
-  include(RepositoriesHelper, GitMirror::Patches::RepositoriesHelperPatch)
+  include(RepositoriesHelper, RedmineGitMirror::Patches::RepositoriesHelperPatch)
 end
 
 # Patches to the Redmine core.
