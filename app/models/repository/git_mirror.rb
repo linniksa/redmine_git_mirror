@@ -62,6 +62,17 @@ class Repository::GitMirror < Repository::Git
       errors.add :url, err
       return
     end
+
+    if ::GitMirror::Settings.prevent_multiple_clones?
+      urls = ::GitMirror::URL.parse(url).vary(
+        :all => ::GitMirror::Settings.search_clones_in_all_schemes?
+      )
+
+      if Repository::GitMirror.where(url: urls).exists?
+        errors.add :url, 'is already mirrored in redmine'
+        return
+      end
+    end
   end
 
   private def set_defaults

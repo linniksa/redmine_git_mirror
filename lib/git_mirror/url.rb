@@ -97,6 +97,68 @@ module GitMirror
       o.to_s
     end
 
+    def vary(all: false)
+      schemes = %w[http https ssh scp]
+      http_schemes = %w[http https]
+
+      unless all
+        if http_schemes.include?(self.scheme)
+          schemes = http_schemes
+        else
+          schemes = [self.scheme]
+        end
+      end
+
+      rez = []
+      schemes.each do |scheme|
+        s = to_scheme(scheme)
+        rez.concat(s.vary_suffix('.git'))
+      end
+
+      rez
+    end
+
+    def vary_suffix(suffix)
+      return self.dup unless path
+
+      [
+        to_suffix(suffix, present: false).to_s,
+        to_suffix(suffix, present: true).to_s
+      ]
+    end
+
+    private def to_scheme(scheme)
+      n = self.dup
+      if scheme == 'scp'
+        return n if self.scp_like?
+
+        n.instance_variable_set(:@user, 'git') unless n.user
+        n.instance_variable_set(:@scheme, nil)
+
+        return n
+      end
+
+      n.instance_variable_set(:@scheme, scheme)
+      if self.scp_like?
+        n.instance_variable_set(:@user, nil)
+      end
+
+      n
+    end
+
+    private def to_suffix(suffix, present: )
+      n = self.dup
+      return n unless path
+
+      if present && !path.end_with?(suffix)
+        n.instance_variable_set(:@path, path + suffix)
+      elsif !present
+        n.instance_variable_set(:@path, path.chomp(suffix))
+      end
+
+      n
+    end
+
     def to_h
       rez = {}
       rez[:scheme] = @scheme if @scheme

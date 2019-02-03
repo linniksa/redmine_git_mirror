@@ -3,12 +3,38 @@ For better look i use small hack, sorry about that
 -->
 <%= '</div>'.html_safe %>
 <style type="text/css">
-  #settings .box.settings { display: none}
+  #settings div.box.settings { display: none}
 </style>
 <!---->
 
+<fieldset class="box tabular settings">
+  <legend>General</legend>
+
+  <p>
+    <label for="prevent_multiple_clones">
+      Prevent adding same remote url twice
+    </label>
+    <%= hidden_field_tag "settings[prevent_multiple_clones]", 0 %>
+    <%= check_box_tag "settings[prevent_multiple_clones]", 1, ::GitMirror::Settings.prevent_multiple_clones?,
+        :id => 'prevent_multiple_clones',
+        :data => {:enables => '#search_clones_in_all_schemes'}
+    %>
+  </p>
+
+  <p>
+    <label for="search_clones_by_all_schemes">
+      Search for clones in all url schemes
+    </label>
+    <%= hidden_field_tag "settings[search_clones_in_all_schemes]", 0 %>
+    <%= check_box_tag "settings[search_clones_in_all_schemes]", 1, ::GitMirror::Settings.search_clones_in_all_schemes?,
+      :id => 'search_clones_in_all_schemes'
+    %>
+  </p>
+
+</fieldset>
+
 <fieldset class="box tabular" id="git_mirror_schemas">
-  <legend>Allowed remote url schemes</legend>
+  <legend>Permitted url schemes</legend>
 
   <% {
     'http'  => 'http://site/project.git',
@@ -20,7 +46,7 @@ For better look i use small hack, sorry about that
       <%= check_box_tag \
             "settings[schemes][]", \
             key, \
-            settings.is_a?(Hash) &&settings[:schemes] && settings[:schemes].include?(key)
+            settings.is_a?(Hash) && settings[:schemes] && settings[:schemes].include?(key)
       %>
 
       <%= (sanitize url).sub(key, "<b>#{key}</b>").html_safe %>

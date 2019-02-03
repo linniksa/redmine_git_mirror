@@ -14,6 +14,8 @@ Redmine::Plugin.register :redmine_git_mirror do
 
   settings :default => {
     :schemes  => %w[http https scp],
+    :prevent_multiple_clones => true,
+    :search_clones_in_all_schemes => true,
   }, :partial => 'git_mirror/settings'
 
 end
