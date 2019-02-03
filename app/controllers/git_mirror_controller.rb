@@ -42,8 +42,18 @@ class GitMirrorController < ActionController::Base
   end
 
   private def fetch_by_urls(urls)
+    urls_to_search = []
+
+    urls.each do |url|
+      begin
+        urls_to_search.concat RedmineGitMirror::URL.parse(url).vary
+      rescue Exception => _
+        urls_to_search.push(url)
+      end
+    end
+
     found = false
-    Repository::GitMirror.active.where(url: urls).find_each do |repository|
+    Repository::GitMirror.active.where(url: urls_to_search).find_each do |repository|
       found = true unless found
       repository.fetch()
     end

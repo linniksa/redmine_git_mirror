@@ -100,12 +100,17 @@ module RedmineGitMirror
     def vary(all: false)
       schemes = %w[http https ssh scp]
       http_schemes = %w[http https]
+      ssh_schemes = %w[ssh scp]
+
+      current_scheme = self.scp_like?? 'scp' : self.scheme
 
       unless all
-        if http_schemes.include?(self.scheme)
+        if http_schemes.include?(current_scheme)
           schemes = http_schemes
+        elsif ssh_schemes.include?(current_scheme)
+          schemes = ssh_schemes
         else
-          schemes = [self.scheme]
+          schemes = [current_scheme]
         end
       end
 
@@ -136,11 +141,13 @@ module RedmineGitMirror
         n.instance_variable_set(:@scheme, nil)
 
         return n
+      elsif scheme == 'ssh'
+        n.instance_variable_set(:@user, 'git') unless n.user
       end
 
       n.instance_variable_set(:@scheme, scheme)
       if self.scp_like?
-        n.instance_variable_set(:@user, nil)
+        n.instance_variable_set(:@user, nil) unless %w[ssh scp].include? scheme
       end
 
       n
