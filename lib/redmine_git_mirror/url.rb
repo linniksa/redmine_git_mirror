@@ -22,7 +22,7 @@ module RedmineGitMirror
         @scheme = url.scheme
         @user = url.user
         @password = url.password
-        @host = url.host
+        @host = url.host unless url.host.to_s.empty?
         @port = url.port
         @path = url.path
 

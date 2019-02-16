@@ -1,4 +1,4 @@
-Redmine Git Mirror plugin
+Redmine Git Mirror plugin [![Build Status](https://travis-ci.org/linniksa/redmine_git_mirror.svg?branch=master)](https://travis-ci.org/linniksa/redmine_git_mirror)
 ==================
 
 Adds ability to clone and fetch remote git repositories to redmine.

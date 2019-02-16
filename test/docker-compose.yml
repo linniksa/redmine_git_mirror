@@ -1,0 +1,26 @@
+version: '3.3'
+
+services:
+
+  redmine:
+    build:
+      context: ./docker/redmine
+      args:
+        - VERSION=${REDMINE}
+    depends_on:
+      - selenium_chrome
+    volumes:
+      - "./../:/usr/src/redmine/plugins/redmine_git_mirror"
+
+  selenium:
+    image: selenium/hub:3.141.59-gold
+
+  selenium_chrome:
+    image: selenium/node-chrome:3.141.59-gold
+    volumes:
+      - /dev/shm:/dev/shm
+    depends_on:
+      - selenium
+    environment:
+      HUB_HOST: selenium
+      HUB_PORT: 4444
