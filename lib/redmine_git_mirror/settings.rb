@@ -1,38 +1,50 @@
 
+require 'singleton'
+
 module RedmineGitMirror
   module Settings
+    DEFAULT = {
+      :schemes => %w[http https scp],
+      :url_change_allowed => false,
+      :prevent_multiple_clones => true,
+      :search_clones_in_all_schemes => true,
+    }.freeze
+
     class << self
       def path
         File.expand_path(File.dirname(__FILE__) + '/../../repos/')
       end
 
       def allowed_schemes
-        settings[:schemes] || []
+        self[:schemes] || []
       end
 
       def url_change_allowed?
-        s = settings[:url_change_allowed] || false
+        s = self[:url_change_allowed] || false
 
         s == true || s.to_s == '1'
       end
 
       def prevent_multiple_clones?
-        s = settings[:prevent_multiple_clones] || false
+        s = self[:prevent_multiple_clones] || false
 
         s == true || s.to_s == '1'
       end
 
       def search_clones_in_all_schemes?
-        s = settings[:search_clones_in_all_schemes] || false
+        s = self[:search_clones_in_all_schemes] || false
 
         s == true || s.to_s == '1'
       end
 
-      private def settings
-        s = Setting[:plugin_redmine_git_mirror]
-        return s if s.is_a? Hash
+      private def [](key)
+        key = key.intern if key.is_a?(String)
+        settings = Setting[:plugin_redmine_git_mirror] || {}
 
-        {}
+        return settings[key] if settings.key?(key)
+        return settings[key.to_s] if settings.key?(key.to_s)
+
+        DEFAULT[key]
       end
     end
   end

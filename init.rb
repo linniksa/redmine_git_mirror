@@ -12,12 +12,7 @@ Redmine::Plugin.register :redmine_git_mirror do
 
   requires_redmine :version_or_higher => '3.3.0'
 
-  settings :default => {
-    :schemes  => %w[http https scp],
-    :url_change_allowed => false,
-    :prevent_multiple_clones => true,
-    :search_clones_in_all_schemes => true,
-  }, :partial => 'git_mirror/settings'
+  settings :default => RedmineGitMirror::Settings::DEFAULT, :partial => 'git_mirror/settings'
 
 end
 

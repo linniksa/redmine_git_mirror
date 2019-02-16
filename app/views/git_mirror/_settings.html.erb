@@ -56,7 +56,7 @@ For better look i use small hack, sorry about that
       <%= check_box_tag \
             "settings[schemes][]", \
             key, \
-            settings.is_a?(Hash) && settings[:schemes] && settings[:schemes].include?(key)
+            RedmineGitMirror::Settings.allowed_schemes.include?(key)
       %>
 
       <%= (sanitize url).sub(key, "<b>#{key}</b>").html_safe %>
