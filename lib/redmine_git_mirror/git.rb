@@ -101,7 +101,9 @@ module RedmineGitMirror
       end
 
       private def git(*cmd)
-        s, e, status = Open3.capture3(GIT_BIN, *cmd)
+        s, e, status = Open3.capture3({
+          'GIT_SSH_COMMAND' => RedmineGitMirror::SSH.command.to_s
+        }, GIT_BIN, *cmd)
         s.to_s.strip!
 
         return s, nil if status.success?
