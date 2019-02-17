@@ -11,6 +11,8 @@ services:
       - selenium_chrome
     volumes:
       - "./../:/usr/src/redmine/plugins/redmine_git_mirror"
+      - type: tmpfs
+        target: /usr/src/redmine/plugins/redmine_git_mirror/repos
 
   selenium:
     image: selenium/hub:3.141.59-gold

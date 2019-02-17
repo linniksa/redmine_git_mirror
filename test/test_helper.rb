@@ -6,13 +6,10 @@ if Redmine::VERSION::MAJOR < 4
   require File.expand_path('../../../../test/ui/base', __FILE__)
 
   class GitMirrorUITestCase < Redmine::UiTest::Base
-    def self.driven_by(name, *cmd)
-      Capybara.current_driver = name
-    end
-
     setup do
       Setting.delete_all
       Setting.clear_cache
+      Capybara.current_driver = :chrome
     end
 
     teardown do
@@ -24,14 +21,17 @@ else
   require File.expand_path('../../../../test/application_system_test_case', __FILE__)
 
   class GitMirrorUITestCase < ApplicationSystemTestCase
+    driven_by :chrome
   end
 end
 
 class GitMirrorUITestCase
-  driven_by :chrome
-
   setup do
     Capybara.app_host = "http://#{`hostname -i`.strip}:#{Capybara.server_port}"
+  end
+
+  def save_screenshoot()
+    page.save_screenshot(File.expand_path('../_screenshot.png', __FILE__))
   end
 end
 
@@ -43,6 +43,7 @@ Capybara.register_driver :chrome do |app|
   )
 end
 
+Capybara.default_driver = :chrome
 Capybara.run_server = true
 Capybara.server_host = '0.0.0.0'
 Capybara.server_port ||= 31337

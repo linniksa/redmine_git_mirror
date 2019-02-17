@@ -108,17 +108,22 @@ module RedmineGitMirror
 
         return s, nil if status.success?
 
-        e.to_s.strip!
-
-        if e.lines.first
-          e = e.lines.first.strip.truncate(100)
-        else
-          e = e.truncate(100)
-        end
-
-        e = e || "git exit with status #{status}"
+        e = guess_error_message(e).to_s.truncate(100) || "git exit with status #{status}"
 
         return s, e
+      end
+
+      private def guess_error_message(msg)
+        msg = msg.to_s.strip
+
+        return msg if msg.empty?
+
+        msg.each_line do |line|
+          line.strip!
+          return line unless line.start_with?('Warning')
+        end
+
+        msg.lines.first.strip
       end
     end
   end
