@@ -1,4 +1,8 @@
 require 'redmine'
+require_dependency 'redmine_git_mirror/git'
+require_dependency 'redmine_git_mirror/ssh'
+require_dependency 'redmine_git_mirror/url'
+require_dependency 'redmine_git_mirror/settings'
 
 Redmine::Scm::Base.add 'GitMirror'
 
