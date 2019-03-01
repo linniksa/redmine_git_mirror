@@ -149,7 +149,7 @@ class Repository::GitMirror < Repository::Git
     return if commits.empty?
 
     # remove commits from heads extra info
-    h = extra_info["heads"]
+    h = extra_info ? extra_info["heads"] : nil
     if h
       h1 = h.dup
       commits.each { |c| h1.delete(c) }
