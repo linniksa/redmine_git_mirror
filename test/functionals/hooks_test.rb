@@ -52,16 +52,6 @@ class HooksTest < Redmine::IntegrationTest
     assert_response 202
   end
 
-  test 'gitlab hook wrong key' do
-    post '/sys/git_mirror/gitlab',
-         :params => '{}',
-         :headers => {
-           'X-GITLAB-TOKEN' => 'wrong',
-         }
-
-    assert_response 403
-  end
-
   test 'gitlab hook unknown url' do
     post '/sys/git_mirror/gitlab',
          :params => {

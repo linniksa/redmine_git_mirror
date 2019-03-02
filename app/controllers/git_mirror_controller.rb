@@ -3,16 +3,12 @@ class GitMirrorController < ActionController::Base
 
   # abstract hook for repo update via remote url
   def fetch
-    return unless check_enabled(params[:key])
-
     found = fetch_by_urls(params[:url])
-    head found ? 200 : 404
+    head found ? 202 : 404
   end
 
   # process gitlab webhook request
   def gitlab
-    return unless check_enabled(request.headers["x-gitlab-token"])
-
     event = params[:event_name]
     unless request.post? && event
       head 400
@@ -64,12 +60,5 @@ class GitMirrorController < ActionController::Base
     end
 
     found
-  end
-
-  private def check_enabled(token)
-    return true if Setting.sys_api_enabled? && token.to_s == Setting.sys_api_key
-
-    render :plain => 'Access denied. Repository management WS is disabled or key is invalid.', :status => 403
-    false
   end
 end

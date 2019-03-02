@@ -35,15 +35,9 @@ Run ```./bin/rails runner "Repository::GitMirror.fetch"```, for example:
 
 Hooks is preferred way because you can immediately see changes of you repository.
 
-To enable hooks you should go to `redmine.site/settings?tab=repositories` and enable WS support:
+### GitLab hooks
 
-![Enable ws support](docs/img/redmine-ws.png)
-
-### GitLab integration
-
-You can setup per-project or system wide hook, for both variants use 
-* `redmine.site/sys/git_mirror/gitlab` as `URL`
-* key from `Repository management WS API key` as `Secret Token`
+You can setup per-project or system wide hook, for both variants use `redmine.site/sys/git_mirror/gitlab` as `URL`
 
 ###### For system wide setup
 
