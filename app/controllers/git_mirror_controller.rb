@@ -29,15 +29,20 @@ class GitMirrorController < ActionController::Base
       return
     end
 
-    ssh_url = project[:git_ssh_url]
-    http_url = project[:git_http_url]
+    urls = []
 
-    unless ssh_url && http_url
+    [:git_ssh_url, :git_http_url].each do |p|
+      url = project[p].to_s
+
+      urls.push(url) if url.length > 0
+    end
+
+    if urls.length <= 0
       head 422
       return
     end
 
-    found = fetch_by_urls([ssh_url, http_url])
+    found = fetch_by_urls(urls)
     head found ? 202 : 404
   end
 
