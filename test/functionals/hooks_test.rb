@@ -5,8 +5,6 @@ class HooksTest < Redmine::IntegrationTest
 
   setup do
     Setting.enabled_scm = %w(GitMirror)
-    Setting.sys_api_enabled = '1'
-    Setting.sys_api_key = 'secret'
 
     Repository.delete_all
 
@@ -20,6 +18,53 @@ class HooksTest < Redmine::IntegrationTest
     Repository.delete_all
   end
 
+  test 'github hook - json' do
+    post '/sys/git_mirror/github',
+         :params => {
+           'repository' => {
+             'clone_url' => 'https://github.com/linniksa/redmine_git_mirror.git',
+           }
+         }.to_json,
+         :headers => {
+           'CONTENT_TYPE' => 'application/json',
+           'X-GitHub-Event' => 'push',
+         }
+
+    assert_response 202
+  end
+
+  test 'github hook - url encoded' do
+    post '/sys/git_mirror/github',
+         :params => {
+           :payload => {
+             'repository' => {
+               'clone_url' => 'https://github.com/linniksa/redmine_git_mirror.git',
+             }
+           }.to_json,
+         },
+         :headers => {
+           'CONTENT_TYPE' => 'application/x-www-form-urlencoded',
+           'X-GitHub-Event' => 'push',
+         }
+
+    assert_response 202
+  end
+
+  test 'github hook unknown url' do
+    post '/sys/git_mirror/github',
+         :params => {
+           'repository' => {
+             'clone_url' => 'http://example.com/some.git',
+           }
+         }.to_json,
+         :headers => {
+           'CONTENT_TYPE' => 'application/json',
+           'X-GitHub-Event' => 'push',
+         }
+
+    assert_response 404
+  end
+
   test 'gitlab hook' do
     post '/sys/git_mirror/gitlab',
          :params => {
@@ -30,7 +75,6 @@ class HooksTest < Redmine::IntegrationTest
          }.to_json,
          :headers => {
            "CONTENT_TYPE" => 'application/json',
-           'X-GITLAB-TOKEN' => 'secret',
          }
 
     assert_response 202
@@ -46,7 +90,6 @@ class HooksTest < Redmine::IntegrationTest
          }.to_json,
          :headers => {
            "CONTENT_TYPE" => 'application/json',
-           'X-GITLAB-TOKEN' => 'secret',
          }
 
     assert_response 202
@@ -62,7 +105,6 @@ class HooksTest < Redmine::IntegrationTest
          }.to_json,
          :headers => {
            "CONTENT_TYPE" => 'application/json',
-           'X-GITLAB-TOKEN' => 'secret',
          }
 
     assert_response 404

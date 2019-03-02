@@ -12,14 +12,15 @@ class GitMirrorController < ActionController::Base
     event = params[:event_name]
     unless request.post? && event
       head 400
+      return
     end
 
-    project = params[:project]
     unless %w[push repository_update].include?(event.to_s)
       head 200
       return
     end
 
+    project = params[:project]
     unless project
       head 422
       return
@@ -29,6 +30,55 @@ class GitMirrorController < ActionController::Base
 
     [:git_ssh_url, :git_http_url].each do |p|
       url = project[p].to_s
+
+      urls.push(url) if url.length > 0
+    end
+
+    if urls.length <= 0
+      head 422
+      return
+    end
+
+    found = fetch_by_urls(urls)
+    head found ? 202 : 404
+  end
+
+  # process github webhook request
+  def github
+    event = request.headers["x-github-event"]
+    unless request.post? && event
+      head 400
+      return
+    end
+
+    unless %w[push].include?(event.to_s)
+      head 200
+      return
+    end
+
+    payload = params[:payload]
+
+    if payload && request.content_type != 'application/json'
+      payload = JSON.parse(payload, :symbolize_names => true)
+    else
+      payload = params
+    end
+
+    unless payload
+      head 422
+      return
+    end
+
+    repository = payload[:repository]
+    unless repository
+      head 422
+      return
+    end
+
+    urls = []
+
+    [:ssh_url, :clone_url, :git_url].each do |p|
+      url = repository[p].to_s
 
       urls.push(url) if url.length > 0
     end

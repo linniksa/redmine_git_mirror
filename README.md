@@ -47,3 +47,9 @@ Go to `gitlab.site/admin/hooks`, and select only `Repository update events` trig
 
 Go to `gitlab.site/user/project/settings/integrations`, and select only `Push` and `Tags` events
 
+### GitHub hooks
+
+You can setup per-project or group wide hook, for both variants 
+use `redmine.site/sys/git_mirror/github` as `Payload URL` and `Just the push event` option.
+
+Don't worry about `Content type` both `application/json` and `application/x-www-form-urlencoded` are supported.
