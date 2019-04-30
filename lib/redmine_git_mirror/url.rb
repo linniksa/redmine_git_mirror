@@ -194,8 +194,10 @@ module RedmineGitMirror
         end
 
         s << @host
-	s<<":"
-	s<< @port
+        if @port
+	          s<<":"
+	          s<< @port
+        end
         s << path
       elsif @host
         if @user
