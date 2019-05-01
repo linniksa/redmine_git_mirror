@@ -40,6 +40,13 @@ class TestUrl < Minitest::Test
       :path => '/path/to/repo.git/'
     }],
 
+    :remote_https_with_port => ['https://gitlab.site:9443/path/to/project.git', {
+      :scheme => 'https',
+      :host => 'gitlab.site',
+      :port => 9443,
+      :path => '/path/to/project.git'
+    }],
+
     :remote_scp_like => ['git@github.com:user/repo.git', {
       :user => 'git',
       :host => 'github.com',

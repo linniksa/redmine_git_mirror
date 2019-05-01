@@ -24,6 +24,7 @@ module RedmineGitMirror
         @password = url.password
         @host = url.host unless url.host.to_s.empty?
         @port = url.port
+        @default_port = url.default_port
         @path = url.path
 
         return
@@ -194,6 +195,10 @@ module RedmineGitMirror
         end
 
         s << @host
+        if @port and @port != @default_port
+          s << ':'
+          s << @port
+        end
         s << path
       elsif @host
         if @user
