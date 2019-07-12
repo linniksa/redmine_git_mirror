@@ -12,7 +12,7 @@ class TestUrl < Minitest::Test
   end
 
   cases = {
-    :ssh => ['ssh://git@host.xz/path/to/repo.git/', [:ssh, :credentials], {
+    :ssh => ['ssh://git@host.xz/path/to/repo.git/', [:ssh], {
       :scheme => 'ssh',
       :user => 'git',
       :host => 'host.xz',

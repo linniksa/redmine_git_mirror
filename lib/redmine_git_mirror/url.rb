@@ -84,9 +84,9 @@ module RedmineGitMirror
     end
 
     def has_credential?
-      return false if scp_like?
+      return false if uses_ssh? && password.nil?
 
-      !password.to_s.empty? || !user.to_s.empty?
+      !password.nil? || !user.nil?
     end
 
     def normalize
