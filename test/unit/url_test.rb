@@ -11,27 +11,36 @@ class TestUrl < Minitest::Test
     assert_equal 'http://test.ru/123.git', url.normalize
   end
 
-  def test_use_ssh
-    assert RedmineGitMirror::URL.parse('ssh://git@host.xz/path/to/repo.git/').uses_ssh?
-    assert RedmineGitMirror::URL.parse('git@github.com:user/repo.git').uses_ssh?
-  end
-
   cases = {
-    :remote_ssh => ['ssh://git@host.xz/path/to/repo.git/', {
+    :ssh => ['ssh://git@host.xz/path/to/repo.git/', [:ssh, :credentials], {
       :scheme => 'ssh',
       :user => 'git',
       :host => 'host.xz',
       :path => '/path/to/repo.git/'
     }],
 
-    :remote_git => ['git://host.xz/path/to/repo.git/', {
+    :ssh_pwd => ['ssh://git:password@host.xz/path/to/repo.git/', [:ssh, :credentials], {
+      :scheme => 'ssh',
+      :user => 'git',
+      :password => 'password',
+      :host => 'host.xz',
+      :path => '/path/to/repo.git/'
+    }],
+
+    :scp_like => ['git@github.com:user/repo.git', [:ssh], {
+      :user => 'git',
+      :host => 'github.com',
+      :path => '/user/repo.git'
+    }],
+
+    :git => ['git://host.xz/path/to/repo.git/', [], {
       :scheme => 'git',
       :host => 'host.xz',
       :port => 9418,
       :path => '/path/to/repo.git/'
     }],
 
-    :remote_http => ['http://git:pwd@host.xz/path/to/repo.git/', {
+    :http_with_credentials => ['http://git:pwd@host.xz/path/to/repo.git/', [:credentials], {
       :scheme => 'http',
       :user => 'git',
       :password => 'pwd',
@@ -40,64 +49,71 @@ class TestUrl < Minitest::Test
       :path => '/path/to/repo.git/'
     }],
 
-    :remote_https_with_port => ['https://gitlab.site:9443/path/to/project.git', {
+    :http_with_user => ['http://git@host.xz/path/to/repo.git/', [:credentials], {
+      :scheme => 'http',
+      :user => 'git',
+      :host => 'host.xz',
+      :port => 80,
+      :path => '/path/to/repo.git/'
+    }],
+
+    :https => ['https://gitlab.site/path/to/project.git', [], {
+      :scheme => 'https',
+      :host => 'gitlab.site',
+      :port => 443,
+      :path => '/path/to/project.git'
+    }],
+
+    :https_with_port => ['https://gitlab.site:9443/path/to/project.git', [], {
       :scheme => 'https',
       :host => 'gitlab.site',
       :port => 9443,
       :path => '/path/to/project.git'
     }],
 
-    :remote_scp_like => ['git@github.com:user/repo.git', {
-      :user => 'git',
-      :host => 'github.com',
-      :path => '/user/repo.git'
-    }],
-
-    :local_unix => ['/home/user/projects/test', {
+    :unix => ['/home/user/projects/test', [:local], {
       :path => '/home/user/projects/test',
     }],
 
-    :local_file_scheme => ['file:///sys/projects/my.git', {
+    :file_scheme => ['file:///sys/projects/my.git', [:local], {
       :scheme => 'file',
       :path => '/sys/projects/my.git',
     }],
 
-    :local_windows => ['C:\\project\\my', {
+    :windows => ['C:\\project\\my', [:local], {
       :path => 'C:\\project\\my',
     }],
   }
 
   cases.each do |key, value|
-    url_to_parse, expected = value
+    url_to_parse, tags, expected = value
+
     define_method :"test_#{key}" do
       url = RedmineGitMirror::URL.parse(url_to_parse)
-
-      if key.to_s.start_with? ('remote')
-        assert_remote url
-      else
-        assert_local url
-      end
+      assert_instance_of RedmineGitMirror::URL, url
 
       assert_equal expected, url.to_h
       assert_equal url_to_parse, url.to_s
+
+      if tags.include? :local
+        assert url.local?, 'local? should return true'
+        assert !url.remote?, 'remote? should return false'
+      else
+        assert url.remote?, 'remote? should return true'
+        assert !url.local?, 'local? should return false'
+      end
+
+      if tags.include? :ssh
+        assert url.uses_ssh?, 'uses_ssh? should return true'
+      else
+        assert !url.uses_ssh?, 'uses_ssh? should return false'
+      end
+
+      if tags.include? :credentials
+        assert url.has_credential?, 'has_credential? should return true'
+      else
+        assert !url.has_credential?, 'has_credential? should return false'
+      end
     end
-  end
-
-
-
-
-###############################################################################
-  def assert_local (url)
-    assert_instance_of RedmineGitMirror::URL, url
-
-    assert url.local?, 'local? should return true'
-    assert !url.remote?, 'remote? should return false'
-  end
-
-  def assert_remote (url)
-    assert_instance_of RedmineGitMirror::URL, url
-
-    assert url.remote?, 'remote? should return true'
-    assert !url.local?, 'local? should return false'
   end
 end
