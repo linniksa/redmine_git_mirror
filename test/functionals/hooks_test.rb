@@ -80,7 +80,7 @@ class HooksTest < Redmine::IntegrationTest
     assert_response 202
   end
 
-  test 'gitlab hook with .git' do
+  test 'gitlab hook without .git' do
     post '/sys/git_mirror/gitlab',
          :params => {
            'event_name' => 'repository_update',
@@ -106,6 +106,39 @@ class HooksTest < Redmine::IntegrationTest
          :headers => {
            "CONTENT_TYPE" => 'application/json',
          }
+
+    assert_response 404
+  end
+
+  test 'general hook' do
+    get '/sys/git_mirror/fetch', :params => {
+      'url' => 'https://github.com/linniksa/redmine_git_mirror',
+    }
+
+    assert_response 202
+  end
+
+  test 'general hook short scheme' do
+    get '/sys/git_mirror/fetch', :params => {
+      'url' => '//github.com/linniksa/redmine_git_mirror',
+    }
+
+    assert_response 202
+  end
+
+  # can be changed in the future
+  test 'general hook without scheme' do
+    get '/sys/git_mirror/gitlab', :params => {
+      'url' => 'github.com/linniksa/redmine_git_mirror',
+    }
+
+    assert_response 404
+  end
+
+  test 'general hook unknown url' do
+    get '/sys/git_mirror/gitlab', :params => {
+      'url' => 'http://example.com/some.git',
+    }
 
     assert_response 404
   end

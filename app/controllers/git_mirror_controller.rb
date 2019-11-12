@@ -3,7 +3,15 @@ class GitMirrorController < ActionController::Base
 
   # abstract hook for repo update via remote url
   def fetch
-    found = fetch_by_urls(params[:url])
+    url = params[:url]
+    begin
+      RedmineGitMirror::URL.parse(url)
+    rescue
+      head 400
+      return
+    end
+    found = fetch_by_urls([url])
+
     head found ? 202 : 404
   end
 
