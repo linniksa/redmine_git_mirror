@@ -7,6 +7,7 @@ env:
   - REDMINE=3.3
   - REDMINE=3.4
   - REDMINE=4.0
+  - REDMINE=4.1
 
 matrix:
   fast_finish: true
