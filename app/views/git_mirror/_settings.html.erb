@@ -41,6 +41,16 @@ For better look i use small hack, sorry about that
     %>
   </p>
 
+  <p>
+    <label for="branches_to_fetch_change_allowed">
+      Allow users to change the branches to fetch
+    </label>
+    <%= hidden_field_tag "settings[branches_to_fetch_change_allowed]", 0 %>
+    <%= check_box_tag "settings[branches_to_fetch_change_allowed]", 1, RedmineGitMirror::Settings.branches_to_fetch_change_allowed?,
+                      :id => 'branches_to_fetch_change_allowed'
+    %>
+  </p>
+
 </fieldset>
 
 <fieldset class="box tabular" id="git_mirror_schemas">
