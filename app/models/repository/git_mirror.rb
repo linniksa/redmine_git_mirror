@@ -5,7 +5,7 @@ class Repository::GitMirror < Repository::Git
   before_validation :set_defaults, on: :create
   after_validation :init_repo, on: :create
   after_validation :validate_branches, on: [:create, :update]
-  after_commit :fetch, on: :create
+  after_commit :fetch, on: [:create, :update]
 
   after_validation :update_remote_url, on: :update
 
