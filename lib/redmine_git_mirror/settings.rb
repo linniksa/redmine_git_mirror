@@ -44,6 +44,12 @@ module RedmineGitMirror
         s == true || s.to_s == '1'
       end
 
+      def remove_unreachable_on_fetch?
+        s = self[:remove_unreachable_on_fetch] || false
+
+        s == true || s.to_s == '1'
+      end
+
       private def [](key)
         key = key.intern if key.is_a?(String)
         settings = Setting[:plugin_redmine_git_mirror] || {}

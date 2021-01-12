@@ -161,11 +161,13 @@ class Repository::GitMirror < Repository::Git
     err = RedmineGitMirror::Git.fetch(root_url, url, refspecs)
     Rails.logger.warn 'Err with fetching: ' + err if err
 
-    remove_unreachable_commits
+    if RedmineGitMirror::Settings.remove_unreachable_on_fetch?
+      remove_unreachable_commits
+    end
     fetch_changesets(true)
   end
 
-  private def remove_unreachable_commits
+  def remove_unreachable_commits
     commits, e = RedmineGitMirror::Git.unreachable_commits(root_url)
     if e
       Rails.logger.warn 'Err when fetching unreachable commits: ' + e
