@@ -1,0 +1,9 @@
+<% if @repository.is_a? Repository::GitMirror %>
+    <% if home_url = @repository.home_url %>
+        <% if home_url.include? "github.com" %>
+            <%= link_to l(:button_view_on_github), @repository.home_url, :class => 'icon icon-github' %>
+        <% elsif home_url.include? "gitlab.com" %>
+            <%= link_to l(:button_view_on_gitlab), @repository.home_url, :class => 'icon icon-gitlab' %>
+        <% end %>
+    <% end %>
+<% end %>

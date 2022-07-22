@@ -18,6 +18,12 @@ class Repository::GitMirror < Repository::Git
     repository.new_record? || RedmineGitMirror::Settings.url_change_allowed?
   }
 
+  def home_url
+    m = url.match /(?<hostname>github\.com|gitlab\.com)[\/:](?<repository>.+)\.git$/
+
+    m ? 'https://' + m[:hostname] + '/' + m[:repository] : nil
+  end
+
   private def update_remote_url
     return unless self.errors.empty?
     return unless self.url_changed?

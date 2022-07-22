@@ -1,2 +1,4 @@
 en:
+  button_view_on_github: 'View on GitHub'
+  button_view_on_gitlab: 'View on GitLab'
   text_git_mirror_url_note: URL of remote repository.

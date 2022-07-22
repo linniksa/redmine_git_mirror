@@ -1,4 +1,5 @@
 require 'redmine'
+require_dependency 'redmine_git_mirror/hooks'
 require_dependency 'redmine_git_mirror/git'
 require_dependency 'redmine_git_mirror/ssh'
 require_dependency 'redmine_git_mirror/url'
