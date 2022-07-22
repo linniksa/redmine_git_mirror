@@ -11,10 +11,19 @@ Adds ability to clone and fetch remote git repositories to redmine.
 
 # Install
 
+1. Install the plugin in Redmine’s `plugin` folder:
+    ```bash
     cd [redmine-root]/plugins
     git clone https://github.com/linniksa/redmine_git_mirror
+    ```
 
-Restart redmine, and enable `Git Mirror` scm type at `redmine.site/settings?tab=repositories`
+2. From Redmine’s root directory, install the plugin's dependencies:
+    ```bash
+    cd [redmine-root]
+    bundle install --without development test
+    ```
+
+3. Restart redmine, and enable `Git Mirror` scm type at `redmine.site/settings?tab=repositories`
 
 ## Accessing private repositories
 
