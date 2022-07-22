@@ -1,0 +1,4 @@
+fr:
+  button_view_on_github: 'Voir sur GitHub'
+  button_view_on_gitlab: 'Voir sur GitLab'
+  text_git_mirror_url_note: "Adresse de l'entrepôt distant."
