@@ -70,6 +70,18 @@ For better look i use small hack, sorry about that
   <legend>Hooks</legend>
 
   <p>
+    <label for="settings_gitlab_token">
+      GitLab Token
+    </label>
+    <%= text_field_tag "settings[gitlab_token]",
+                       RedmineGitMirror::Settings.gitlab_token,
+                       :size => 30,
+                       :id   => 'settings_gitlab_token' %>
+
+    <%= link_to_function l(:label_generate_key), "$('#settings_gitlab_token').val(randomKey(20))" %>
+  </p>
+
+  <p>
     <label for="settings_github_secret_key">
       GitHub Secret Key
     </label>

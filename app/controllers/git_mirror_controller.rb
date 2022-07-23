@@ -17,6 +17,11 @@ class GitMirrorController < ActionController::Base
 
   # process gitlab webhook request
   def gitlab
+    unless verify_gitlab_signature
+      head 401
+      return
+    end
+
     event = params[:event_name]
     unless request.post? && event
       head 400
@@ -123,6 +128,14 @@ class GitMirrorController < ActionController::Base
     end
 
     found
+  end
+
+  private def verify_gitlab_signature
+    expectedToken = RedmineGitMirror::Settings.gitlab_token
+    return true unless expectedToken.present?
+
+    token = request.headers["X-Gitlab-Token"]
+    return expectedToken == token
   end
 
   private def verify_github_signature
