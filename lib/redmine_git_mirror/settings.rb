@@ -5,7 +5,9 @@ module RedmineGitMirror
   module Settings
     DEFAULT = {
       :schemes => %w[http https scp],
+      :gitlab_hook_enabled => false,
       :gitlab_token => nil,
+      :github_hook_enabled => false,
       :github_secret_key => nil,
       :url_change_allowed => false,
       :prevent_multiple_clones => true,
@@ -21,8 +23,20 @@ module RedmineGitMirror
         self[:schemes] || []
       end
 
+      def gitlab_hook_enabled?
+        s = self[:gitlab_hook_enabled] || false
+
+        s == true || s.to_s == '1'
+      end
+
       def gitlab_token
         self[:gitlab_token]
+      end
+
+      def github_hook_enabled?
+        s = self[:github_hook_enabled] || false
+
+        s == true || s.to_s == '1'
       end
 
       def github_secret_key

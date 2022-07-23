@@ -17,6 +17,11 @@ class GitMirrorController < ActionController::Base
 
   # process gitlab webhook request
   def gitlab
+    unless RedmineGitMirror::Settings.gitlab_hook_enabled?
+      head 404
+      return
+    end
+
     unless verify_gitlab_signature
       head 401
       return
@@ -58,6 +63,11 @@ class GitMirrorController < ActionController::Base
 
   # process github webhook request
   def github
+    unless RedmineGitMirror::Settings.github_hook_enabled?
+      head 404
+      return
+    end
+
     unless verify_github_signature
       head 401
       return

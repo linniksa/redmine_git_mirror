@@ -70,15 +70,38 @@ For better look i use small hack, sorry about that
   <legend>Hooks</legend>
 
   <p>
+    <label for="gitlab_hook_enabled">
+      Enable GitLab hook
+    </label>
+    <%= hidden_field_tag "settings[gitlab_hook_enabled]", 0 %>
+    <%= check_box_tag "settings[gitlab_hook_enabled]", 1, RedmineGitMirror::Settings.gitlab_hook_enabled?,
+                      :id => 'gitlab_hook_enabled',
+                      :onclick => "if (this.checked) { $('#settings_gitlab_token').removeAttr('disabled'); } else { $('#settings_gitlab_token').attr('disabled', true); }" %>
+  </p>
+
+  <p>
     <label for="settings_gitlab_token">
       GitLab Token
     </label>
     <%= text_field_tag "settings[gitlab_token]",
                        RedmineGitMirror::Settings.gitlab_token,
-                       :size => 30,
-                       :id   => 'settings_gitlab_token' %>
+                       :size     => 30,
+                       :id       => 'settings_gitlab_token',
+                       :disabled => !RedmineGitMirror::Settings.gitlab_hook_enabled? %>
 
-    <%= link_to_function l(:label_generate_key), "$('#settings_gitlab_token').val(randomKey(20))" %>
+    <%= link_to_function l(:label_generate_key), "if (!$('#settings_gitlab_token').attr('disabled')) { $('#settings_gitlab_token').val(randomKey(20)) }" %>
+  </p>
+
+  <hr>
+
+  <p>
+    <label for="github_hook_enabled">
+      Enable GitHub hook
+    </label>
+    <%= hidden_field_tag "settings[github_hook_enabled]", 0 %>
+    <%= check_box_tag "settings[github_hook_enabled]", 1, RedmineGitMirror::Settings.github_hook_enabled?,
+                      :id => 'github_hook_enabled',
+                      :onclick => "if (this.checked) { $('#settings_github_secret_key').removeAttr('disabled'); } else { $('#settings_github_secret_key').attr('disabled', true); }" %>
   </p>
 
   <p>
@@ -87,10 +110,11 @@ For better look i use small hack, sorry about that
     </label>
     <%= text_field_tag "settings[github_secret_key]",
                        RedmineGitMirror::Settings.github_secret_key,
-                       :size => 30,
-                       :id   => 'settings_github_secret_key' %>
+                       :size     => 30,
+                       :id       => 'settings_github_secret_key',
+                       :disabled => !RedmineGitMirror::Settings.github_hook_enabled? %>
 
-    <%= link_to_function l(:label_generate_key), "$('#settings_github_secret_key').val(randomKey(20))" %>
+    <%= link_to_function l(:label_generate_key), "if (!$('#settings_github_secret_key').attr('disabled')) { $('#settings_github_secret_key').val(randomKey(20)) }" %>
   </p>
 
 </fieldset>
