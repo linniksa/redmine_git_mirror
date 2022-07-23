@@ -66,6 +66,22 @@ For better look i use small hack, sorry about that
 </fieldset>
 <p><%= check_all_links 'git_mirror_schemas' %></p>
 
+<fieldset class="box tabular">
+  <legend>Hooks</legend>
+
+  <p>
+    <label for="settings_github_secret_key">
+      GitHub Secret Key
+    </label>
+    <%= text_field_tag "settings[github_secret_key]",
+                       RedmineGitMirror::Settings.github_secret_key,
+                       :size => 30,
+                       :id   => 'settings_github_secret_key' %>
+
+    <%= link_to_function l(:label_generate_key), "$('#settings_github_secret_key').val(randomKey(20))" %>
+  </p>
+
+</fieldset>
 
 <!-- End part of hack for valid html -->
 <%= '<div>'.html_safe %>

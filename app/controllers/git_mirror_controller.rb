@@ -53,6 +53,11 @@ class GitMirrorController < ActionController::Base
 
   # process github webhook request
   def github
+    unless verify_github_signature
+      head 401
+      return
+    end
+
     event = request.headers["x-github-event"]
     unless request.post? && event
       head 400
@@ -118,5 +123,17 @@ class GitMirrorController < ActionController::Base
     end
 
     found
+  end
+
+  private def verify_github_signature
+    secretKey = RedmineGitMirror::Settings.github_secret_key
+    return true unless secretKey.present?
+
+    signature = request.headers["X-Hub-Signature-256"]
+    return false unless signature.present?
+
+    digest = OpenSSL::Digest.new("sha256")
+    expected_signature = "sha256=" + OpenSSL::HMAC.hexdigest(digest, secretKey, request.body.read)
+    return Rack::Utils.secure_compare(expected_signature, signature)
   end
 end

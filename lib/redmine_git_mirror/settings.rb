@@ -5,6 +5,7 @@ module RedmineGitMirror
   module Settings
     DEFAULT = {
       :schemes => %w[http https scp],
+      :github_secret_key => nil,
       :url_change_allowed => false,
       :prevent_multiple_clones => true,
       :search_clones_in_all_schemes => true,
@@ -17,6 +18,10 @@ module RedmineGitMirror
 
       def allowed_schemes
         self[:schemes] || []
+      end
+
+      def github_secret_key
+        self[:github_secret_key]
       end
 
       def url_change_allowed?
