@@ -8,11 +8,11 @@ For better look i use small hack, sorry about that
 <!---->
 
 <fieldset class="box tabular settings">
-  <legend>General</legend>
+  <legend><%= l(:label_general) %></legend>
 
   <p>
     <label for="url_change_allowed">
-      Allow users to change URL (risky)
+      <%= l(:label_allow_users_to_change_url) %>
     </label>
     <%= hidden_field_tag "settings[url_change_allowed]", 0 %>
     <%= check_box_tag "settings[url_change_allowed]", 1, RedmineGitMirror::Settings.url_change_allowed?,
@@ -22,7 +22,7 @@ For better look i use small hack, sorry about that
 
   <p>
     <label for="prevent_multiple_clones">
-      Prevent adding same remote url twice
+      <%= l(:label_prevent_adding_same_remove_url_twice) %>
     </label>
     <%= hidden_field_tag "settings[prevent_multiple_clones]", 0 %>
     <%= check_box_tag "settings[prevent_multiple_clones]", 1, RedmineGitMirror::Settings.prevent_multiple_clones?,
@@ -33,7 +33,7 @@ For better look i use small hack, sorry about that
 
   <p class="prevent_multiple_clones_shows">
     <label for="search_clones_by_all_schemes">
-      Search for clones in all url schemes
+      <%= l(:label_search_for_clones_in_all_url_schemes) %>
     </label>
     <%= hidden_field_tag "settings[search_clones_in_all_schemes]", 0 %>
     <%= check_box_tag "settings[search_clones_in_all_schemes]", 1, RedmineGitMirror::Settings.search_clones_in_all_schemes?,
@@ -44,13 +44,13 @@ For better look i use small hack, sorry about that
 </fieldset>
 
 <fieldset class="box tabular" id="git_mirror_schemas">
-  <legend>Permitted url schemes</legend>
+  <legend><%= l(:label_permitted_url_schemes) %></legend>
 
   <% {
-    'http'  => 'http://site/project.git',
-    'https' => 'https://site/project.git',
-    'ssh'   => 'ssh://site/project.git',
-    'scp'   => 'git@site:project.git',
+    'http'  => l(:label_http_git_example),
+    'https' => l(:label_https_git_example),
+    'ssh'   => l(:label_ssh_git_example),
+    'scp'   => l(:label_scp_git_example),
   }.each do | key, url |%>
     <label class="floating" title="<%= key %>">
       <%= check_box_tag \
@@ -67,11 +67,11 @@ For better look i use small hack, sorry about that
 <p><%= check_all_links 'git_mirror_schemas' %></p>
 
 <fieldset class="box tabular">
-  <legend>Hooks</legend>
+  <legend><%= l(:label_hooks) %></legend>
 
   <p>
     <label for="gitlab_hook_enabled">
-      Enable GitLab hook
+      <%= l(:label_enable_gitlab_hook) %>
     </label>
     <%= hidden_field_tag "settings[gitlab_hook_enabled]", 0 %>
     <%= check_box_tag "settings[gitlab_hook_enabled]", 1, RedmineGitMirror::Settings.gitlab_hook_enabled?,
@@ -81,7 +81,7 @@ For better look i use small hack, sorry about that
 
   <p>
     <label for="settings_gitlab_token">
-      GitLab Token
+      <%= l(:label_gitlab_token) %>
     </label>
     <%= text_field_tag "settings[gitlab_token]",
                        RedmineGitMirror::Settings.gitlab_token,
@@ -96,7 +96,7 @@ For better look i use small hack, sorry about that
 
   <p>
     <label for="github_hook_enabled">
-      Enable GitHub hook
+      <%= l(:label_enable_github_hook) %>
     </label>
     <%= hidden_field_tag "settings[github_hook_enabled]", 0 %>
     <%= check_box_tag "settings[github_hook_enabled]", 1, RedmineGitMirror::Settings.github_hook_enabled?,
@@ -106,7 +106,7 @@ For better look i use small hack, sorry about that
 
   <p>
     <label for="settings_github_secret_key">
-      GitHub Secret Key
+      <%= l(:label_github_secret_key) %>
     </label>
     <%= text_field_tag "settings[github_secret_key]",
                        RedmineGitMirror::Settings.github_secret_key,

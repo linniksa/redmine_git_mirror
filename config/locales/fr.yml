@@ -2,3 +2,16 @@ fr:
   button_view_on_github: 'Voir sur GitHub'
   button_view_on_gitlab: 'Voir sur GitLab'
   text_git_mirror_url_note: "Adresse de l'entrepôt distant."
+  label_allow_users_to_change_url: Permettre aux utilisateurs de modifier les URLs (risqué)
+  label_prevent_adding_same_remove_url_twice: Prévenir les URLs ajoutées en double
+  label_search_for_clones_in_all_url_schemes: "Rechercher les clones dans tous les schémas d'URL"
+  label_permitted_url_schemes: "Schémas d'URL autorisés"
+  label_http_git_example: "http://site/projet.git"
+  label_https_git_example: "https://site/projet.git"
+  label_ssh_git_example: "ssh://site/projet.git"
+  label_scp_git_example: "git@site:projet.git"
+  label_hooks: Webhooks
+  label_enable_gitlab_hook: Activer le webhook GitLab
+  label_gitlab_token: Jeton GitLab
+  label_enable_github_hook: Activer le webhook GitHub
+  label_github_secret_key: Clé secrète GitHub
