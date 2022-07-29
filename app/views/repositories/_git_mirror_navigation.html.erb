@@ -1,4 +1,6 @@
 <% if @repository.is_a? Repository::GitMirror %>
+    <%= link_to_function l(:button_copy_clone_url), 'copyTextToClipboard(this);', :class => 'icon icon-server-go', :title => @repository.url, data: {'clipboard-text' => @repository.url} %>
+
     <% if home_url = @repository.home_url %>
         <% if home_url.include? "github.com" %>
             <%= link_to l(:button_view_on_github), @repository.home_url, :class => 'icon icon-github' %>
