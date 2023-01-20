@@ -7,7 +7,7 @@ module RedmineGitMirror
 
       def check_remote_url(url)
         url = RedmineGitMirror::URL.parse(url)
-        RedmineGitMirror::SSH.ensure_host_known(url.host) if url.uses_ssh?
+        RedmineGitMirror::Ssh.ensure_host_known(url.host) if url.uses_ssh?
 
         _, e = git 'ls-remote',  '-h', url.to_s, 'master'
         e
@@ -34,7 +34,7 @@ module RedmineGitMirror
 
       def init(clone_path, url)
         url = RedmineGitMirror::URL.parse(url)
-        RedmineGitMirror::SSH.ensure_host_known(url.host) if url.uses_ssh?
+        RedmineGitMirror::Ssh.ensure_host_known(url.host) if url.uses_ssh?
 
         if Dir.exists? clone_path
           o, e = get_remote_url(clone_path)
@@ -102,7 +102,7 @@ module RedmineGitMirror
 
       private def git(*cmd)
         s, e, status = Open3.capture3({
-          'GIT_SSH_COMMAND' => RedmineGitMirror::SSH.command.to_s
+          'GIT_SSH_COMMAND' => RedmineGitMirror::Ssh.command.to_s
         }, GIT_BIN, *cmd)
         s.to_s.strip!
 
