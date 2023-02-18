@@ -1,0 +1,49 @@
+name: CI
+on: push
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - redmine-version: '4.2'
+            ruby-version: '2.7'
+
+#          - redmine-version: '5.0'
+#            ruby-version: '3.0'
+
+    env:
+      RAILS_ENV: test
+      REDMINE_DIR: ${{ github.workspace }}/redmine
+
+    steps:
+      - uses: browser-actions/setup-chrome@v1
+        with: { chrome-version: 'stable' }
+
+      - uses: actions/checkout@v3
+
+      - name: Set up Ruby ${{ matrix.ruby-version }}
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ matrix.ruby-version }}
+
+      - name: Checkout redmine ${{ matrix.redmine-version }}
+        uses: actions/checkout@v3
+        with:
+          path: redmine
+          repository: redmine/redmine
+          ref: ${{ matrix.redmine-version }}-stable
+
+      - name: Install deps
+        run: |
+          cd $REDMINE_DIR
+          mkdir -p plugins
+          ln -s ${{ github.workspace }} plugins/redmine_git_mirror
+          ./../test/docker/redmine/scripts/configure.sh
+
+      - name: Migrate DB
+        run: test/docker/redmine/scripts/migrate-db.sh
+
+      - name: Run tests
+        run: CHROMIUM_BIN=$(which chrome) test/docker/redmine/run-tests.sh

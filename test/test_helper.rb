@@ -35,15 +35,25 @@ class GitMirrorUITestCase
   end
 end
 
+options = Selenium::WebDriver::Chrome::Options.new(
+  binary: ENV['CHROMIUM_BIN'] || "/usr/bin/google-chrome"
+)
+
 Capybara.register_driver :chrome do |app|
-  Capybara::Selenium::Driver.new(app,
-    :browser => :remote,
-    :desired_capabilities => :chrome,
-    :url => "http://selenium:4444/wd/hub"
+  options.add_argument('--headless')
+  options.add_argument('--disable-gpu')
+  options.add_argument('--window-size=1280,800')
+
+  Capybara::Selenium::Driver.new(
+    app,
+    browser: :chrome,
+    options: options,
   )
 end
 
 Capybara.default_driver = :chrome
+Capybara.javascript_driver = :chrome
+
 Capybara.run_server = true
 Capybara.server_host = '0.0.0.0'
 Capybara.server_port ||= 31337
