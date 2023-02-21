@@ -10,8 +10,8 @@ jobs:
           - redmine-version: '4.2'
             ruby-version: '2.7'
 
-#          - redmine-version: '5.0'
-#            ruby-version: '3.0'
+          - redmine-version: '5.0'
+            ruby-version: '3.0'
 
     env:
       RAILS_ENV: test
