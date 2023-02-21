@@ -4,7 +4,8 @@ class Repository::GitMirror < Repository::Git
   before_validation :validate_and_normalize_url, on: [:create, :update]
   before_validation :set_defaults, on: :create
   after_validation :init_repo, on: :create
-  after_commit :fetch, on: :create
+  after_validation :validate_branches, on: [:create, :update]
+  after_commit :fetch, on: [:create, :update]
 
   after_validation :update_remote_url, on: :update
 
@@ -17,6 +18,23 @@ class Repository::GitMirror < Repository::Git
   safe_attributes 'url', :if => lambda { |repository, user|
     repository.new_record? || RedmineGitMirror::Settings.url_change_allowed?
   }
+
+  safe_attributes 'extra_info', :if => lambda {|repository, user|
+    repository.new_record? || RedmineGitMirror::Settings.branches_to_fetch_change_allowed?
+  }
+
+  safe_attributes 'branches_to_fetch', :if => lambda { |repository, user|
+    repository.new_record? || RedmineGitMirror::Settings.branches_to_fetch_change_allowed?
+  }
+
+  def branches_to_fetch
+    return "*" unless extra_info && extra_info["branches_to_fetch"]
+    extra_info["branches_to_fetch"]
+  end
+
+  def refspecs
+    branches_to_fetch.split(/,/).collect { |m|m.strip }.map { |branch| "+refs/heads/%s:refs/heads/%s" % [branch, branch] }
+  end
 
   private def update_remote_url
     return unless self.errors.empty?
@@ -99,6 +117,14 @@ class Repository::GitMirror < Repository::Git
     end
   end
 
+  private def validate_branches
+    err = RedmineGitMirror::Git.fetch(root_url, url, refspecs, dry_run=true)
+    if err
+      errors.add :branches_to_fetch, err
+      return
+    end
+  end
+
   private def set_defaults
     return unless self.errors.empty? && !url.to_s.empty?
 
@@ -117,7 +143,7 @@ class Repository::GitMirror < Repository::Git
   private def init_repo
     return unless self.errors.empty?
 
-    err = RedmineGitMirror::Git.init(root_url, url)
+    err = RedmineGitMirror::Git.init(root_url, url, refspecs)
     errors.add :url, err if err
   end
 
@@ -132,14 +158,16 @@ class Repository::GitMirror < Repository::Git
 
     puts "Fetching repo #{url} to #{root_url}"
 
-    err = RedmineGitMirror::Git.fetch(root_url, url)
+    err = RedmineGitMirror::Git.fetch(root_url, url, refspecs)
     Rails.logger.warn 'Err with fetching: ' + err if err
 
-    remove_unreachable_commits
+    if RedmineGitMirror::Settings.remove_unreachable_on_fetch?
+      remove_unreachable_commits
+    end
     fetch_changesets(true)
   end
 
-  private def remove_unreachable_commits
+  def remove_unreachable_commits
     commits, e = RedmineGitMirror::Git.unreachable_commits(root_url)
     if e
       Rails.logger.warn 'Err when fetching unreachable commits: ' + e

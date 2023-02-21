@@ -1,2 +1,4 @@
 en:
   text_git_mirror_url_note: URL of remote repository.
+  text_git_mirror_branches_to_fetch_note: |-
+    Fetch specified branches (comma-separated, globbing allowed, e.g. "master,next*" for master and optional next and similar)

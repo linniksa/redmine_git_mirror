@@ -51,9 +51,17 @@ class GitMirrorController < ActionController::Base
     head found ? 202 : 404
   end
 
-  # process github webhook request
   def github
-    event = request.headers["x-github-event"]
+    common_webhook("x-github-event")
+  end
+
+  def gitea
+    common_webhook("X-Gitea-Event")
+  end
+
+  # process github webhook request
+  private def common_webhook(event_header)
+    event = request.headers[event_header]
     unless request.post? && event
       head 400
       return

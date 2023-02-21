@@ -32,7 +32,7 @@ module RedmineGitMirror
         e
       end
 
-      def init(clone_path, url)
+      def init(clone_path, url, refspec_list)
         url = RedmineGitMirror::URL.parse(url)
         RedmineGitMirror::SSH.ensure_host_known(url.host) if url.uses_ssh?
 
@@ -49,19 +49,23 @@ module RedmineGitMirror
           return e if e
         end
 
-        set_fetch_refs(clone_path, [
-          '+refs/heads/*:refs/heads/*',
-          '+refs/tags/*:refs/tags/*',
-          # uncomment next line if you want to show (gitlab) merge requests as braches in redmine
+        set_fetch_refs(clone_path, refspec_list + [
+          #'+refs/tags/*:refs/tags/*',
+          # # next line if you want to show (gitlab) merge requests as braches in redmine
           # '+refs/merge-requests/*/head:refs/heads/MR-*',
         ])
       end
 
-      def fetch(clone_path, url)
-        e = RedmineGitMirror::Git.init(clone_path, url)
+      def fetch(clone_path, url, branch_list, dry_run=false)
+        e = RedmineGitMirror::Git.init(clone_path, url, branch_list)
         return e if e
 
-        _, e = git "--git-dir", clone_path, "fetch", "--prune", "--all"
+        unless dry_run
+          _, e = git "--git-dir", clone_path, "fetch", "--prune", "--all"
+        else
+          _, e = git "--git-dir", clone_path, "fetch", "--dry-run", "--prune", "--all"
+        end
+
         e
       end
 
@@ -124,6 +128,10 @@ module RedmineGitMirror
         end
 
         msg.lines.first.strip
+      end
+
+      private def refspecs_from_branch_list(branch_list)
+        branch_list.map { |branch| '+refs/heads/%s:refs/heads/%s' % [branch, branch]  }
       end
     end
   end

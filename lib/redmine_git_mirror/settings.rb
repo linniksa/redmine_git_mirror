@@ -8,6 +8,7 @@ module RedmineGitMirror
       :url_change_allowed => false,
       :prevent_multiple_clones => true,
       :search_clones_in_all_schemes => true,
+      :branches_to_fetch_change_allowed => true,
     }.freeze
 
     class << self
@@ -33,6 +34,18 @@ module RedmineGitMirror
 
       def search_clones_in_all_schemes?
         s = self[:search_clones_in_all_schemes] || false
+
+        s == true || s.to_s == '1'
+      end
+
+      def branches_to_fetch_change_allowed?
+        s = self[:branches_to_fetch_change_allowed] || false
+
+        s == true || s.to_s == '1'
+      end
+
+      def remove_unreachable_on_fetch?
+        s = self[:remove_unreachable_on_fetch] || false
 
         s == true || s.to_s == '1'
       end

@@ -41,6 +41,26 @@ For better look i use small hack, sorry about that
     %>
   </p>
 
+  <p>
+    <label for="branches_to_fetch_change_allowed">
+      Allow users to change the branches to fetch
+    </label>
+    <%= hidden_field_tag "settings[branches_to_fetch_change_allowed]", 0 %>
+    <%= check_box_tag "settings[branches_to_fetch_change_allowed]", 1, RedmineGitMirror::Settings.branches_to_fetch_change_allowed?,
+                      :id => 'branches_to_fetch_change_allowed'
+    %>
+  </p>
+
+  <p>
+    <label for="remove_unreachable_on_fetch">
+      Remove unreachable commits when fetching commits from server
+    </label>
+    <%= hidden_field_tag "settings[remove_unreachable_on_fetch]", 0 %>
+    <%= check_box_tag "settings[remove_unreachable_on_fetch]", 1, RedmineGitMirror::Settings.remove_unreachable_on_fetch?,
+                      :id => 'remove_unreachable_on_fetch'
+    %>
+  </p>
+
 </fieldset>
 
 <fieldset class="box tabular" id="git_mirror_schemas">
