@@ -41,6 +41,17 @@ For better look i use small hack, sorry about that
     %>
   </p>
 
+  <p>
+    <label for="settings_custom_path">
+      <%= l(:label_repositories_path) %>
+    </label>
+    <%= text_field_tag "settings[custom_path]",
+                       RedmineGitMirror::Settings.custom_path,
+                       :placeholder => RedmineGitMirror::Settings.default_path,
+                       :id => 'settings_custom_path',
+                       :size => 100 %>
+  </p>
+
 </fieldset>
 
 <fieldset class="box tabular" id="git_mirror_schemas">

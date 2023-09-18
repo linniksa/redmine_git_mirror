@@ -11,12 +11,21 @@ module RedmineGitMirror
       :github_secret_key => nil,
       :url_change_allowed => false,
       :prevent_multiple_clones => true,
+      :custom_path => nil,
       :search_clones_in_all_schemes => true,
     }.freeze
 
     class << self
-      def path
+      def default_path
         File.expand_path(File.dirname(__FILE__) + '/../../repos/')
+      end
+
+      def custom_path
+        self[:custom_path]
+      end
+
+      def path
+        self.custom_path || self.default_path
       end
 
       def allowed_schemes

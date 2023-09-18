@@ -6,6 +6,7 @@ fr:
   label_allow_users_to_change_url: Permettre aux utilisateurs de modifier les URLs (risqué)
   label_prevent_adding_same_remove_url_twice: Prévenir les URLs ajoutées en double
   label_search_for_clones_in_all_url_schemes: "Rechercher les clones dans tous les schémas d'URL"
+  label_repositories_path: 'Chemin des dépôts'
   label_permitted_url_schemes: "Schémas d'URL autorisés"
   label_http_git_example: "http://site/projet.git"
   label_https_git_example: "https://site/projet.git"

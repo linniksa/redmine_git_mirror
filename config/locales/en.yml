@@ -6,6 +6,7 @@ en:
   label_allow_users_to_change_url: Allow users to change URL (risky)
   label_prevent_adding_same_remove_url_twice: Prevent adding same remote url twice
   label_search_for_clones_in_all_url_schemes: Search for clones in all url schemes
+  label_repositories_path: 'Repositories Path'
   label_permitted_url_schemes: Permitted url schemes
   label_http_git_example: "http://site/project.git"
   label_https_git_example: "https://site/project.git"
