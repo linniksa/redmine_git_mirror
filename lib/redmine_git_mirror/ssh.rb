@@ -1,6 +1,6 @@
 
 module RedmineGitMirror
-  module SSH
+  module Ssh
     class << self
       def ensure_host_known(host)
         return unless host
