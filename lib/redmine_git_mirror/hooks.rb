@@ -1,5 +1,5 @@
 module RedmineGitMirror
-    class HookListener < Redmine::Hook::ViewListener
+    class Hooks < Redmine::Hook::ViewListener
         render_on :view_repositories_navigation, partial: 'repositories/git_mirror_navigation'
 
         def view_layouts_base_html_head(context={})
